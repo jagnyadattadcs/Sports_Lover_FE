@@ -1,10 +1,12 @@
-import { MdOutlineLocalShipping, MdCreditCard  } from "react-icons/md";
+import { MdOutlineLocalShipping, MdCreditCard, MdOutlinePhone  } from "react-icons/md";
 import { RiSecurePaymentLine } from "react-icons/ri";
 import { FiMail, FiTwitter, FiInstagram, FiYoutube } from "react-icons/fi";
 import { LuFacebook } from "react-icons/lu";
 import { FaCcVisa, FaCcMastercard, FaCcAmex } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+    const navigate = useNavigate();
   return (
     <div className="bg-[#0B3D91] flex flex-col items-center">
         {/* Features Section */}
@@ -65,6 +67,15 @@ const Footer = () => {
                 <p className="text-gray-400 text-sm sm:text-base">
                     Your one-stop destination for premium sports equipment, apparel, and accessories. Gear up for your best performance.
                 </p>
+                <div>
+                    <p className="text-white">Address :</p>
+                    <p className="text-gray-300">College Square, Cuttack, Odisha</p>
+                    <p className="text-gray-300">753003</p>
+                </div>
+                <div className='flex items-center gap-1'>
+                    <span className='text-white text-lg'><MdOutlinePhone /></span>
+                    <span className='text-gray-300 text-xs lg:text-sm'>: +91 9778716214 / 8270946494</span>
+                </div>
                 <div className="flex gap-3 mt-4 text-white">
                     <LuFacebook size={30} className="p-2 bg-blue-800 rounded-full hover:bg-blue-600 cursor-pointer transition-all duration-300"/>
                     <FiTwitter size={30} className="p-2 bg-blue-800 rounded-full hover:bg-blue-600 cursor-pointer transition-all duration-300"/>
@@ -77,12 +88,14 @@ const Footer = () => {
             <div>
                 <h4 className="text-white text-lg sm:text-xl font-semibold mb-3">Shop</h4>
                 <ul className="flex flex-col gap-1">
-                    <li className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Running</li>
-                    <li className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Football</li>
-                    <li className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Gym & Fitness</li>
-                    <li className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Yoga</li>
-                    <li className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Cycling</li>
-                    <li className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Swimming</li>
+                    <li onClick={()=> navigate("/products/running")} className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Running</li>
+                    <li onClick={()=> navigate("/products/football")} className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Football</li>
+                    <li onClick={()=> navigate("/products/gym-fitness")} className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Gym & Fitness</li>
+                    <li onClick={()=> navigate("/products/yoga")} className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Yoga</li>
+                    <li onClick={()=> navigate("/products/cycling")} className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Cycling</li>
+                    <li onClick={()=> navigate("/products/swimming")} className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Swimming</li>
+                    <li onClick={()=> navigate("/products/basketball")} className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Basketball</li>
+                    <li onClick={()=> navigate("/products/tennis")} className="text-sm sm:text-base text-gray-400 hover:text-white transition-all duration-300 cursor-pointer">Tennis</li>
                 </ul>
             </div>
             

@@ -4,6 +4,7 @@ import { IoSearchOutline, IoClose } from "react-icons/io5";
 import { FiShoppingCart } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const NavTabs = [
     {
@@ -64,8 +65,6 @@ const sampleProducts = [
 ];
 
 const Navbar = () => {
-    const wishlistCount = 1; // dynamically update this
-    const cartCount = 5;     // dynamically update this
     const [activeTab, setActiveTab] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);
@@ -74,6 +73,7 @@ const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const searchRef = useRef(null);
     const timeoutRef = useRef(null);
+    const { wishlistedItems, cartItems } = useAuth();
 
     // Debounce search function
     useEffect(() => {
@@ -155,7 +155,7 @@ const Navbar = () => {
                 <div className='flex justify-center items-center gap-2 lg:gap-4'>
                     <div className='flex items-center gap-1'>
                         <span className='text-white text-lg'><MdOutlinePhone /></span>
-                        <span className='text-white text-xs lg:text-sm'>+91 18001234567</span>
+                        <span className='text-white text-xs lg:text-sm'>+91 9778716214 / 8270946494</span>
                     </div>
                     <div className='flex items-center gap-1'>
                         <span className='text-white text-lg'><MdMailOutline /></span>
@@ -275,17 +275,17 @@ const Navbar = () => {
                 <div className="flex justify-center items-center gap-4 lg:gap-6">
                     <Link to="/wishlist" className="relative hover:text-blue-600 transition-colors duration-200">
                         <IoIosHeartEmpty className="text-2xl lg:text-3xl" />
-                        {wishlistCount > 0 && (
+                        {wishlistedItems.length > 0 && (
                             <span className="absolute -top-1 -right-2 bg-red-600 text-white text-[10px] font-semibold rounded-full px-1.5 py-0.5 flex items-center justify-center">
-                                {wishlistCount}
+                                {wishlistedItems.length}
                             </span>
                         )}
                     </Link>
                     <Link to="/cart" className="relative hover:text-blue-600 transition-colors duration-200">
                         <FiShoppingCart className="text-2xl lg:text-3xl" />
-                        {cartCount > 0 && (
+                        {cartItems.length > 0 && (
                             <span className="absolute -top-1 -right-2 bg-green-600 text-white text-[10px] font-semibold rounded-full px-1.5 py-0.5 flex items-center justify-center">
-                                {cartCount}
+                                {cartItems.length}
                             </span>
                         )}
                     </Link>

@@ -1,27 +1,31 @@
 import { FaArrowRight, FaStar } from "react-icons/fa6"
 import { LuShoppingCart } from "react-icons/lu";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
-import { useState } from "react";
 import { products } from "../utils/products.js";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const NewArrivals = () => {
-    const [wishlistedItems, setWishlistedItems] = useState([]);
+    const {wishlistedItems, setWishlistedItems, cartItems, setCartItems} = useAuth();
 
-    const toggleWishlist = (productId,e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setWishlistedItems(prev => 
-        prev.includes(productId) 
-            ? prev.filter(id => id !== productId)
-            : [...prev, productId]
-        );
+    const toggleWishlist = (product, e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      setWishlistedItems(prev => {
+        const exists = prev.some(item => item.id === product.id);
+        return exists
+          ? prev.filter(item => item.id !== product.id)
+          : [...prev, product];
+      });
     };
-    const handleAddCart = (productId, e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        // Add to cart logic here
-        console.log(`Added product ${productId} to cart`);
+    const handleAddCart = (product, e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setCartItems(prev => {
+          const exist = prev.some(item => item.id === product.id);
+          return exist ? prev : [...prev, product];
+      });
     }
   return (
     <div className="mx-4 sm:mx-6 lg:mx-8 py-6">
@@ -36,7 +40,7 @@ const NewArrivals = () => {
       </div>
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 px-2">
         {products.slice(0,4).map((product) => (
-          <Link to={`/product/${product.id}`}>
+          <Link to={`/product/${product.id}`} key={product.id}>
             <div key={product.id} className="relative w-full h-80 sm:h-96 lg:h-100 border border-gray-300 rounded-lg group overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
               {/* Product Image */}
               <div className="w-full h-[60%] sm:h-[65%] overflow-hidden rounded-tl-lg rounded-tr-lg">
@@ -48,8 +52,16 @@ const NewArrivals = () => {
               </div>
               
               {/* Add to Cart Button - Behind product info */}
-              <button onClick={(e)=>handleAddCart(product.id,e)} className="absolute bottom-23 left-1/2 transform -translate-x-1/2 w-[90%] bg-blue-700 text-white py-1 sm:py-1.5 rounded-lg hover:bg-blue-800 transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:-translate-y-14 flex justify-center items-center gap-2 text-sm sm:text-base z-10 cursor-pointer">
-                <LuShoppingCart size={18} /> Add to Cart
+              <button 
+                onClick={(e) => handleAddCart(product, e)} 
+                className={`absolute bottom-23 left-1/2 transform -translate-x-1/2 w-[90%] py-1 sm:py-1.5 rounded-lg transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:-translate-y-14 flex justify-center items-center gap-2 text-sm sm:text-base z-10 cursor-pointer ${
+                  cartItems.some(item => item.id === product.id)
+                    ? "bg-green-600 hover:bg-green-700" // Green for already in cart
+                    : "bg-blue-700 hover:bg-blue-800"   // Blue for add to cart
+                } text-white`}
+              >
+                <LuShoppingCart size={18} /> 
+                {cartItems.some(item => item.id === product.id) ? "Already in Cart" : "Add to Cart"}
               </button>
 
               {/* Product Info - Above cart button */}
@@ -82,13 +94,13 @@ const NewArrivals = () => {
 
               {/* Wishlist Button */}
               <div 
-                className="absolute top-2 right-2 p-2 bg-white rounded-full hover:bg-blue-700 transition-colors duration-200 cursor-pointer z-30"
-                onClick={(e) => toggleWishlist(product.id,e)}
+                  className="absolute top-2 right-2 p-2 bg-white rounded-full hover:bg-blue-700 transition-colors duration-200 cursor-pointer z-30"
+                  onClick={(e) => toggleWishlist(product, e)}
               >
-                {wishlistedItems.includes(product.id) ? 
-                  <FaHeart className="text-red-600 text-sm sm:text-base" /> : 
-                  <FaRegHeart className="text-gray-600 hover:text-white text-sm sm:text-base" />
-                }
+                  {wishlistedItems.some(item => item.id === product.id) ? 
+                      <FaHeart className="text-red-600 text-sm sm:text-base" /> : 
+                      <FaRegHeart className="text-gray-600 hover:text-white text-sm sm:text-base" />
+                  }
               </div>
             </div>
           </Link>

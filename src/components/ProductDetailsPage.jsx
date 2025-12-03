@@ -4,18 +4,26 @@ import { FaStar, FaRegStar, FaCheck, FaTruck, FaShieldAlt, FaUndo, FaHeart, FaRe
 import { LuShoppingCart } from "react-icons/lu";
 import { MdOutlineArrowBack } from "react-icons/md";
 import { products } from "../utils/products.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const ProductDetailsPage = () => {
     const { productId } = useParams();
     const navigate = useNavigate();
+    const { cartItems, setCartItems, wishlistedItems, setWishlistedItems } = useAuth();
+    
     const [product, setProduct] = useState(null);
     const [selectedSize, setSelectedSize] = useState("");
     const [selectedColor, setSelectedColor] = useState("");
     const [quantity, setQuantity] = useState(1);
-    const [wishlisted, setWishlisted] = useState(false);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    // Check if product is in wishlist
+    const isWishlisted = product ? wishlistedItems.some(item => item.id === product.id) : false;
+    
+    // Check if product is in cart
+    const isInCart = product ? cartItems.some(item => item.id === product.id) : false;
 
     // Product images gallery
     const productImages = [
@@ -68,21 +76,64 @@ const ProductDetailsPage = () => {
     };
 
     const handleAddToCart = () => {
-        // Add to cart logic here
+        if (!product) return;
+        
         const cartItem = {
             ...product,
             selectedSize,
             selectedColor,
-            quantity
+            quantity,
+            price: product.price,
+            originalPrice: product.originalPrice
         };
-        console.log("Added to cart:", cartItem);
-        // Show success message or notification
+        
+        // Check if item already exists in cart
+        const existingItemIndex = cartItems.findIndex(item => item.id === product.id);
+        
+        if (existingItemIndex >= 0) {
+            // Update quantity if item exists
+            const updatedCartItems = [...cartItems];
+            updatedCartItems[existingItemIndex] = {
+                ...updatedCartItems[existingItemIndex],
+                quantity: updatedCartItems[existingItemIndex].quantity + quantity
+            };
+            setCartItems(updatedCartItems);
+        } else {
+            // Add new item to cart
+            setCartItems(prev => [...prev, cartItem]);
+        }
+        
+        // Show success message
         alert(`${quantity} ${product.name} added to cart!`);
     };
 
     const handleBuyNow = () => {
         handleAddToCart();
         navigate("/cart");
+    };
+
+    const toggleWishlist = () => {
+        if (!product) return;
+        
+        if (isWishlisted) {
+            // Remove from wishlist
+            setWishlistedItems(prev => 
+                prev.filter(item => item.id !== product.id)
+            );
+        } else {
+            // Add to wishlist
+            setWishlistedItems(prev => [...prev, product]);
+        }
+    };
+
+    const handleMoveToCartFromWishlist = () => {
+        handleAddToCart();
+        // Remove from wishlist if it was there
+        if (isWishlisted) {
+            setWishlistedItems(prev => 
+                prev.filter(item => item.id !== product.id)
+            );
+        }
     };
 
     const renderStars = (rating) => {
@@ -108,23 +159,31 @@ const ProductDetailsPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (!product) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Product Not Found</h2>
-                <p className="text-gray-600 mb-6">The product you're looking for doesn't exist.</p>
-                <Link 
-                    to="/category/all" 
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                    Browse Products
-                </Link>
+            <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Product Not Found</h2>
+                        <p className="text-gray-600 mb-6">The product you're looking for doesn't exist.</p>
+                        <Link 
+                            to="/category/all" 
+                            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            Browse Products
+                        </Link>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -132,7 +191,7 @@ const ProductDetailsPage = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Back Navigation */}
-            <div className="bg-white border-b border-gray-200">
+            <div className="bg-white shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
                     <button 
                         onClick={() => navigate(-1)}
@@ -198,7 +257,7 @@ const ProductDetailsPage = () => {
                             <div>
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                                        <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">
                                             {product.name}
                                         </h1>
                                         <div className="flex items-center gap-2 mb-3">
@@ -212,10 +271,10 @@ const ProductDetailsPage = () => {
                                         </div>
                                     </div>
                                     <button 
-                                        onClick={() => setWishlisted(!wishlisted)}
+                                        onClick={toggleWishlist}
                                         className="p-3 rounded-full hover:bg-gray-100 transition-colors"
                                     >
-                                        {wishlisted ? (
+                                        {isWishlisted ? (
                                             <FaHeart className="text-2xl text-red-600" />
                                         ) : (
                                             <FaRegHeart className="text-2xl text-gray-400 hover:text-red-500" />
@@ -225,13 +284,13 @@ const ProductDetailsPage = () => {
                                 
                                 {/* Price Section */}
                                 <div className="flex items-center gap-4 mb-4">
-                                    <span className="text-3xl font-bold text-blue-700">
+                                    <span className="text-lg sm:text-3xl font-bold text-blue-700">
                                         ₹{product.price.toLocaleString()}
                                     </span>
-                                    <span className="text-xl text-gray-500 line-through">
+                                    <span className="text-lg sm:text-xl text-gray-500 line-through">
                                         ₹{product.originalPrice.toLocaleString()}
                                     </span>
-                                    <span className="text-lg font-semibold text-green-600">
+                                    <span className="text-sm sm:text-lg font-semibold text-green-600">
                                         Save ₹{(product.originalPrice - product.price).toLocaleString()} ({product.discount}% off)
                                     </span>
                                 </div>
@@ -262,7 +321,7 @@ const ProductDetailsPage = () => {
                                             } transition-all duration-200`}
                                         >
                                             <div 
-                                                className="w-10 h-10 rounded-full"
+                                                className="w-6 h-6 sm:w-10 sm:h-10 rounded-full"
                                                 style={{ 
                                                     backgroundColor: color.hex,
                                                     border: color.border || 'none'
@@ -291,7 +350,7 @@ const ProductDetailsPage = () => {
                                         <button
                                             key={size}
                                             onClick={() => setSelectedSize(size)}
-                                            className={`py-3 px-2 text-center border rounded-lg font-medium transition-all duration-200 ${
+                                            className={`sm:py-3 sm:px-2 text-center border rounded-lg font-medium transition-all duration-200 ${
                                                 selectedSize === size
                                                     ? 'bg-blue-600 text-white border-blue-600'
                                                     : 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
@@ -330,16 +389,34 @@ const ProductDetailsPage = () => {
 
                             {/* Action Buttons */}
                             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                                <button
-                                    onClick={handleAddToCart}
-                                    className="flex-1 flex items-center justify-center gap-3 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg"
-                                >
-                                    <LuShoppingCart className="text-xl" />
-                                    Add to Cart
-                                </button>
+                                {!isWishlisted && (
+                                    <button
+                                        onClick={handleAddToCart}
+                                        className={`flex-1 flex items-center justify-center gap-3 py-2 sm:py-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg ${
+                                            isInCart 
+                                                ? 'bg-green-600 text-white hover:bg-green-700'
+                                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                                        }`}
+                                    >
+                                        <LuShoppingCart className="text-xl" />
+                                        {isInCart ? 'Already in Cart' : 'Add to Cart'}
+                                    </button>
+                                )}
+                                
+                                {isWishlisted && (
+                                    <button
+                                        onClick={handleMoveToCartFromWishlist}
+                                        className="flex-1 py-2 sm:py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg"
+                                    >
+                                        Move to Cart
+                                    </button>
+                                )}
+                                
                                 <button
                                     onClick={handleBuyNow}
-                                    className="flex-1 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg"
+                                    className={`flex-1 py-2 sm:py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg ${
+                                        isWishlisted ? 'sm:col-span-1' : ''
+                                    }`}
                                 >
                                     Buy Now
                                 </button>
@@ -367,6 +444,21 @@ const ProductDetailsPage = () => {
                                         <p className="font-semibold">Warranty</p>
                                         <p className="text-sm text-gray-600">1 Year Manufacturer</p>
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Cart Stats */}
+                            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm font-medium text-blue-900">
+                                        Items in your cart: {cartItems.length}
+                                    </span>
+                                    <Link 
+                                        to="/cart" 
+                                        className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                                    >
+                                        View Cart →
+                                    </Link>
                                 </div>
                             </div>
                         </div>

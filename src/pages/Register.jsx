@@ -1,10 +1,15 @@
 import { CiMail, CiLock, CiUser, CiPhone } from "react-icons/ci";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { IoHomeOutline } from "react-icons/io5";
 
 const Register = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
+      <Link to="/" className="group py-1 px-5 border border-gray-400 rounded-md absolute top-2 left-2 sm:top-2 sm:left-10 font-semibold hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-300">
+        <span className="hidden sm:block"><span className="text-xl group-hover:-translate-x-3 transition-all duration-300">←</span> Back to Home</span>
+        <span className="sm:hidden"><IoHomeOutline /></span>
+      </Link>
       <div className="w-full max-w-md">
         {/* Logo and Headings */}
         <div className="text-center mb-6 sm:mb-8">

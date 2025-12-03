@@ -1,10 +1,27 @@
 import { CiMail, CiLock } from "react-icons/ci";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { IoHomeOutline } from "react-icons/io5";
+import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
 const Login = () => {
+  const { login } = useAuth();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    login({email, password});
+    navigate("/account");
+  }
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
+      <Link to="/" className="group py-1 px-5 border border-gray-400 rounded-md absolute top-2 left-2 sm:top-2 sm:left-10 font-semibold hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-300">
+        <span className="hidden sm:block"><span className="text-xl group-hover:-translate-x-3 transition-all duration-300">←</span> Back to Home</span>
+        <span className="sm:hidden"><IoHomeOutline /></span>
+      </Link>
       <div className="w-full max-w-md">
         {/* Logo and Headings */}
         <div className="text-center mb-6 sm:mb-8">
@@ -23,6 +40,8 @@ const Login = () => {
               type="email" 
               name="email" 
               placeholder="Email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="outline-none w-full bg-transparent text-sm sm:text-base"
             />
           </div>
@@ -34,6 +53,8 @@ const Login = () => {
             <input 
               type="password" 
               name="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Password" 
               className="outline-none bg-transparent w-full text-sm sm:text-base" 
             />
@@ -51,7 +72,7 @@ const Login = () => {
           </div>
 
           {/* Login Button */}
-          <button className="bg-blue-600 hover:bg-blue-700 text-white p-2 sm:p-3 my-3 sm:my-4 rounded-md cursor-pointer transition-colors duration-300 text-sm sm:text-base font-medium">
+          <button onClick={handleLogin} className="bg-blue-600 hover:bg-blue-700 text-white p-2 sm:p-3 my-3 sm:my-4 rounded-md cursor-pointer transition-colors duration-300 text-sm sm:text-base font-medium">
             Login
           </button>
 
