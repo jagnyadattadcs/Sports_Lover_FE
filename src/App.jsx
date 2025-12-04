@@ -16,9 +16,23 @@ import OrderStatusPage from './pages/OrderStatusPage';
 import OrderTrackPage from './pages/OrderTrackPage';
 import HelpPage from './pages/HelpPage';
 import AccountPage from './pages/AccountPage';
+import { useEffect, useState } from 'react';
+import Loader from './ui/Loader';
 
 function App() {
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Show loader for 3 seconds on initial mount
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    // ✅ Show only the loader until timeout ends
+    return <Loader />;
+  }
   return (
     <>
       <Routes>
