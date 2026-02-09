@@ -56,7 +56,7 @@ const Navbar = () => {
       <div className="sticky top-0 w-full flex items-center justify-between shadow-md p-2 px-4 lg:px-10 bg-white z-90">
         {/* logo */}
         <div className="w-20 sm:w-25">
-          <img className="w-full rounded-xl shadow-sm shadow-amber-500" src="../../public/logo.png" alt="logo" />
+          <img className="w-full rounded-xl shadow-sm shadow-amber-500" src="./logo.png" alt="logo" />
         </div>
 
         {/* Nav Links - Hidden on small screens */}

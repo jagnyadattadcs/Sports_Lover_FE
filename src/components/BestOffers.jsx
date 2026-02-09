@@ -39,14 +39,14 @@ export default function BestOffers() {
         {offers.map((item) => (
           <div
             key={item.id}
-            className="relative h-90 rounded-2xl overflow-hidden bg-gray-300"
+            className="relative h-90 rounded-2xl overflow-hidden bg-gray-300 group"
           >
             {/* Background Image */}
             {item.image && (
               <img
                 src={item.image}
                 alt="offer"
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 duration-500"
               />
             )}
 
@@ -54,7 +54,7 @@ export default function BestOffers() {
             <div className="absolute inset-0 bg-black/40" />
 
             {/* Diagonal Orange Corner */}
-            <div className="absolute top-0 right-0 w-28 h-28 bg-orange-500 clip-triangle" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500 clip-triangle duration-300 -translate-y-30 group-hover:translate-y-0" />
 
             {/* Content */}
             <div className="relative z-10 h-full flex flex-col justify-end p-6 text-white">

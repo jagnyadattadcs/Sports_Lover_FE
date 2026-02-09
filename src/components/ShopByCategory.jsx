@@ -193,7 +193,7 @@ const ShopByCategory = () => {
               }`}
               style={{
                 width: '280px',
-                height: '180px',
+                height: '280px',
                 backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${item.image})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',

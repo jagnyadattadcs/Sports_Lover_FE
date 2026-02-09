@@ -172,7 +172,7 @@ const Hero = () => {
       </div>
 
       {/* All floating Products - Right Column */}
-      <div className='hidden lg:flex w-full lg:w-1/2 p-4 md:p-5 lg:p-6'>
+      <div className='hidden lg:block w-full lg:w-1/2 p-4 md:p-5 lg:p-6'>
         <FloatingProducts/>
       </div>
     </div>
